@@ -15,13 +15,29 @@ function saveTask() {
   let color = $("#txtColor").val();
 
   let task = new Task(title, description, tag, dueDate, category, color);
-  displayTask(task);
+  
+$.ajax({
+  type: "POST",
+  url: "https://fsdiapi.azurewebsites.net/api/tasks/",
+  data: JSON.stringify(task),
+  contentType:"application/json",
+  success: function(response) {
+    displayTask(task);
   clearForm();
+
+  },
+  error: function(details) {
+    console.log("saved failed", details);
+  },
+   
+});
+
+  
 }
 
 function displayTask(task) {
   
-  let syntax = `<div class="task">
+  let syntax = `<div class="task" style="border-color:${task.color}">
 
     <div class="title-des">
         <h4>${task.title}</h4>
@@ -73,10 +89,51 @@ function showForm() {
   }
 }
 
+function testRequest(){
+  //this is a test http request 
+  $.ajax({
+    type:"GET",
+    url: "https://fsdiapi.azurewebsites.net/",
+    success: function(data){
+      console.log(data);
+    },
+    error:function(details){
+      console.log("Error", details);
+    }
+
+  });
+}
+
+function fetchTask(){
+  $.ajax({
+    type: "GET",
+    url: "https://fsdiapi.azurewebsites.net/api/tasks",
+    contentType:"application/json",
+    success: function(response) {
+      let allTasks = JSON.parse(response);
+  
+      //travel array
+      for(let i =0; i < allTasks.length; i++) {
+        let task = allTasks[i];
+        //display only your task
+        if(task.name == "LaChaka"){
+        displayTask(allTasks[i]);
+        }
+        } 
+      },
+    error: function(details) {
+      console.log("Error", details);
+     },
+     
+  });
+
+}
+
+
 function init() {
   
   // load prev data
-
+fetchTask();
   //catch events
 
   $("#btnSave").click(saveTask);

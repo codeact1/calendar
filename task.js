@@ -8,5 +8,7 @@ class Task {
         this.dueDate = dueDate;
         this.category = cat;
         this.color = color;
+
+        this.name = "LaChaka";
     }
 }
